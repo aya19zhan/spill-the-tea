@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spill the Tea · Which Housewife Are You?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blush: #F4D3CF;
+    --rose: #C46D7A;
+    --rose-deep: #9E4B59;
+    --beige: #F3E7D7;
+    --paper: #FBF5EC;
+    --olive: #6F7646;
+    --olive-deep: #3F4529;
+    --ink: #3A2E2A;
+    --muted: #7A6A62;
+    --line: #E3D3C2;
+    --card: #FFFDF9;
+    --shadow: 0 18px 40px -22px rgba(110, 60, 60, .45);
+    --display: "Gloock", "Georgia", "Times New Roman", serif;
+    --body: "Karla", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --blush: #4A2F33; --rose: #E29AA5; --rose-deep: #F2B8C0;
+      --beige: #2C2620; --paper: #231E1A; --olive: #A8AF7A; --olive-deep: #D3D8AE;
+      --ink: #F3E7DA; --muted: #BFAE9F; --line: #43382F; --card: #2E2722;
+      --shadow: 0 18px 40px -22px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --blush: #4A2F33; --rose: #E29AA5; --rose-deep: #F2B8C0;
+    --beige: #2C2620; --paper: #231E1A; --olive: #A8AF7A; --olive-deep: #D3D8AE;
+    --ink: #F3E7DA; --muted: #BFAE9F; --line: #43382F; --card: #2E2722;
+    --shadow: 0 18px 40px -22px rgba(0,0,0,.7);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 12% 8%, var(--blush) 0, transparent 38%),
+      radial-gradient(circle at 92% 90%, color-mix(in srgb, var(--olive) 22%, transparent) 0, transparent 40%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 28px 20px 140px; position: relative; z-index: 1; }
+
+  /* Brand */
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--olive-deep); font-weight: 700; font-size: 15px; }
+  .brand svg { width: 30px; height: 30px; flex: none; }
+
+  /* Intro */
+  .intro h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(44px, 11vw, 76px); line-height: .98; letter-spacing: -0.01em;
+    margin: 36px 0 18px; color: var(--rose-deep);
+  }
+  .intro .lede { font-size: 19px; max-width: 34ch; margin: 0 0 12px; }
+  .intro .meta { color: var(--muted); margin: 0 0 30px; max-width: 42ch; }
+  .names { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 34px; padding: 0; list-style: none; }
+  .names li {
+    font-family: var(--display); font-size: 18px; padding: 6px 14px;
+    border-radius: 999px; background: var(--card); border: 1px solid var(--line);
+  }
+  .names li:nth-child(odd) { transform: rotate(-2deg); }
+  .names li:nth-child(even) { transform: rotate(1.5deg); }
+
+  .btn {
+    appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 700;
+    font-size: 18px; padding: 16px 30px; border-radius: 999px;
+    background: var(--olive); color: #FFFDF6;
+    box-shadow: 0 6px 0 var(--olive-deep);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  :root[data-theme="dark"] .btn { color: #231E1A; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #231E1A; } }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--olive-deep); }
+  .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--olive-deep); }
+  .btn-ghost {
+    appearance: none; background: none; border: 0; font: inherit; color: var(--muted);
+    cursor: pointer; padding: 8px 4px; text-decoration: underline; text-underline-offset: 3px;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  :focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+
+  /* Quiz */
+  .progress { display: flex; gap: 6px; margin: 28px 0 8px; }
+  .progress span { flex: 1; height: 6px; border-radius: 3px; background: var(--line); transition: background .3s; }
+  .progress span.done { background: var(--rose); }
+  .progress span.now { background: var(--olive); }
+  .qcount { color: var(--muted); font-size: 15px; margin: 0 0 6px; }
+  .question {
+    font-family: var(--display); font-weight: 400; font-size: clamp(28px, 6.5vw, 38px);
+    line-height: 1.12; margin: 0 0 24px; color: var(--ink);
+  }
+  .options { display: grid; gap: 12px; }
+  .opt {
+    appearance: none; text-align: left; font: inherit; color: var(--ink); cursor: pointer;
+    background: var(--card); border: 2px solid var(--line); border-radius: 18px;
+    padding: 15px 18px; display: flex; gap: 14px; align-items: center;
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .opt .dot {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--line); background: var(--paper); transition: all .15s;
+  }
+  .opt:hover { border-color: var(--rose); }
+  .opt.picked { border-color: var(--rose); background: var(--blush); transform: scale(1.015); }
+  .opt.picked .dot { background: var(--rose); border-color: var(--rose); box-shadow: inset 0 0 0 4px var(--blush); }
+  .qnav { margin-top: 20px; min-height: 40px; }
+
+  /* Result */
+  .result-card {
+    margin-top: 30px; background: var(--card); border-radius: 28px;
+    border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden;
+    animation: pop .7s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes pop { from { transform: scale(.85) translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .result-top { padding: 30px 26px 26px; text-align: center; background: var(--blush); position: relative; }
+  .result-top .you { margin: 0; color: var(--rose-deep); font-weight: 700; }
+  .result-top h2 {
+    font-family: var(--display); font-weight: 400; margin: 4px 0 6px;
+    font-size: clamp(54px, 15vw, 88px); line-height: 1; color: var(--ink);
+  }
+  .result-top .tag { margin: 0 auto; max-width: 32ch; font-size: 18px; }
+  .result-body { padding: 26px; }
+  .result-body p { margin: 0 0 16px; }
+  .traits { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .traits li { background: color-mix(in srgb, var(--olive) 16%, transparent); color: var(--olive-deep); padding: 5px 12px; border-radius: 999px; font-weight: 500; font-size: 15px; }
+  .shadow-side { border-left: 4px solid var(--rose); padding: 4px 0 4px 14px; color: var(--muted); }
+  .pairing { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0 6px; }
+  .pairing div { background: var(--beige); border-radius: 16px; padding: 14px; }
+  .pairing small { display: block; color: var(--muted); font-size: 14px; }
+  .pairing strong { font-family: var(--display); font-weight: 400; font-size: 19px; }
+  .mix h3 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 24px 0 12px; }
+  .bar { display: grid; grid-template-columns: 76px 1fr 40px; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 15px; }
+  .bar .track { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+  .bar .fill { height: 100%; background: var(--olive); border-radius: 5px; width: 0; transition: width 1s ease .4s; }
+  .bar.top .fill { background: var(--rose); }
+  .bar .pct { text-align: right; color: var(--muted); }
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 26px; }
+  .toast { color: var(--olive-deep); font-weight: 500; min-height: 1.5em; margin-top: 10px; }
+
+  /* Fence */
+  .fence { position: fixed; left: 0; right: 0; bottom: 0; height: 90px; pointer-events: none; z-index: 0; }
+  .fence svg { width: 100%; height: 100%; display: block; }
+
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+  [hidden] { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+  @media (max-width: 420px) {
+    .pairing { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main class="wrap">
+  <div class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M8 16h20v8a10 10 0 0 1-20 0z" fill="var(--rose)"/>
+      <path d="M28 18h3a4 4 0 0 1 0 8h-3" fill="none" stroke="var(--rose)" stroke-width="2.5"/>
+      <path d="M6 34h26" stroke="var(--olive)" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M14 6c-2 3 2 4 0 7M20 5c-2 3 2 4 0 7" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Spill the Tea · Astana
+  </div>
+
+  <!-- INTRO -->
+  <section id="intro" class="intro">
+    <h1>Which housewife are you?</h1>
+    <p class="lede">Seven honest questions, one very dramatic answer.</p>
+    <p class="meta">A little warm-up for our Desperate Housewives Sunday. Pour yourself some tea and answer like nobody on your street is watching.</p>
+    <ul class="names" aria-label="Possible results">
+      <li>Bree</li><li>Lynette</li><li>Gaby</li><li>Edie</li><li>Susan</li><li>Karen</li>
+    </ul>
+    <button class="btn" id="startBtn">Start the quiz</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" hidden>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <p class="qcount" id="qcount"></p>
+    <h2 class="question" id="question"></h2>
+    <div class="options" id="options" role="group"></div>
+    <div class="qnav"><button class="btn-ghost" id="backBtn">Back</button></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" hidden aria-live="polite"></section>
+</main>
+
+<div class="fence" aria-hidden="true">
+  <svg viewBox="0 0 1200 90" preserveAspectRatio="none">
+    <defs>
+      <pattern id="picket" width="40" height="90" patternUnits="userSpaceOnUse">
+        <path d="M10 90V30l10-12 10 12v60z" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+      </pattern>
+    </defs>
+    <rect x="0" y="48" width="1200" height="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+    <rect x="0" y="72" width="1200" height="8" fill="var(--card)" stroke="var(--line)" stroke-width="2"/>
+    <rect x="0" y="0" width="1200" height="90" fill="url(#picket)"/>
+  </svg>
+</div>
+
+<script>
+const CHARACTERS = {
+  bree: {
+    name: "Bree",
+    tag: "Polished, poised, and always three steps ahead with a casserole.",
+    traits: ["Elegant", "Organised", "Loyal", "Classy", "Perfectionist"],
+    about: "You are the definition of put-together. Your home is spotless, your manners are flawless and your friends know you'll show up for them every single time, probably with something homemade. You believe in tradition, standards and a beautifully set table.",
+    shadow: "The flip side: you can hide your real feelings behind a perfect smile, and 'good enough' is not in your vocabulary. Let people see you messy sometimes. They'll love you even more.",
+    tea: "Earl Grey in fine china",
+    snack: "Homemade lemon tart"
+  },
+  lynette: {
+    name: "Lynette",
+    tag: "Smart, sharp, and the person everyone calls when things fall apart.",
+    traits: ["Ambitious", "Clever", "Honest", "Practical", "Unstoppable"],
+    about: "You are a born leader with a brain that never switches off. You can run a meeting, solve a crisis and plan next week before lunch. You say what you think, and people respect you for it, even when they don't like it.",
+    shadow: "The flip side: you try to carry everything alone and can be a little controlling. Asking for help isn't weakness. Delegate, breathe, have the second cup.",
+    tea: "Strong black tea, no time to wait",
+    snack: "Whatever's closest, honestly"
+  },
+  gaby: {
+    name: "Gaby",
+    tag: "Glamorous, fiery, and impossible to ignore.",
+    traits: ["Energetic", "Stylish", "Confident", "Funny", "Passionate"],
+    about: "You walk into a room and the energy changes. You love beautiful things, you know your worth and you're the friend who makes every night out more fun. Underneath the sparkle, you're fiercely protective of the people you love.",
+    shadow: "The flip side: you can be a bit self-centered sometimes and a little dramatic when things don't go your way. Your heart is big. Let others see it as often as your heels.",
+    tea: "Iced hibiscus with a slice of lime",
+    snack: "Macarons, only the pretty ones"
+  },
+  edie: {
+    name: "Edie",
+    tag: "Bold, unapologetic, and the life of every party.",
+    traits: ["Fearless", "Independent", "Flirty", "Witty", "Magnetic"],
+    about: "You live life on your own terms and you don't wait for permission. You're confident in your body, your choices and your opinions. People may talk about you, but secretly they wish they had half your nerve.",
+    shadow: "The flip side: drama tends to follow you, and sometimes you push people away before they get the chance to get close. Not everyone is competition. Some of them want to be your friends.",
+    tea: "Something stronger, but fine, a spiced chai",
+    snack: "Chocolate-dipped strawberries"
+  },
+  susan: {
+    name: "Susan",
+    tag: "Sweet, romantic, and adorably chaotic.",
+    traits: ["Kind", "Romantic", "Creative", "Warm", "Sincere"],
+    about: "You are pure heart. You believe in love stories, you get emotional at movies and you always see the best in people. You're creative, a little clumsy, and somehow your mishaps turn into the best stories of the night.",
+    shadow: "The flip side: you can be indecisive and you tend to stumble into trouble without meaning to. Trust your own judgement more. You know more than you think.",
+    tea: "Chamomile with honey",
+    snack: "Slightly burnt cookies, made with love"
+  },
+  karen: {
+    name: "Karen",
+    tag: "Wise, witty, and sees absolutely everything.",
+    traits: ["Observant", "Funny", "Resilient", "Straight-talking", "Loyal"],
+    about: "You've got an old soul and a sharp tongue. Nothing gets past you, and your humour is the kind that makes people snort-laugh at the worst moments. When the chips are down, you're the quiet powerhouse everyone underestimated.",
+    shadow: "The flip side: you can be a little nosy, and you sometimes keep your softer side locked up tight. Let people in. You'd make the best mentor.",
+    tea: "Builder's tea, two sugars",
+    snack: "Shortbread from a tin"
+  }
+};
+
+const QUESTIONS = [
+  { q: "It's Sunday morning. Where do we find you?", a: [
+    ["Ironing napkins and baking muffins from scratch", "bree"],
+    ["Coffee in one hand, to-do list in the other", "lynette"],
+    ["At the salon getting a fresh manicure", "gaby"],
+    ["Still asleep after a very late night", "edie"],
+    ["Trying a new recipe and setting off the smoke alarm", "susan"],
+    ["On the porch, watching everything happening on the street", "karen"]
+  ]},
+  { q: "Your friends would describe you as…", a: [
+    ["Elegant and a bit of a perfectionist", "bree"],
+    ["Smart, blunt and super capable", "lynette"],
+    ["Glamorous and fun", "gaby"],
+    ["Bold and unapologetic", "edie"],
+    ["Sweet, romantic, a little clumsy", "susan"],
+    ["Witty and tougher than anyone thinks", "karen"]
+  ]},
+  { q: "A friend's secret just came out. You…", a: [
+    ["Act like nothing happened and bring her a pie", "bree"],
+    ["Make a plan to fix it", "lynette"],
+    ["Want every detail, right now", "gaby"],
+    ["Already knew. You might have told someone", "edie"],
+    ["Worry about her all night", "susan"],
+    ["Knew weeks ago and kept quiet", "karen"]
+  ]},
+  { q: "Your dream Friday night is…", a: [
+    ["A dinner party with a perfect table setting", "bree"],
+    ["Everyone else asleep, a glass of wine, total silence", "lynette"],
+    ["A rooftop bar in your best dress", "gaby"],
+    ["A party where you're the main event", "edie"],
+    ["A candlelit date with someone who makes you blush", "susan"],
+    ["Cards and good stories with old friends", "karen"]
+  ]},
+  { q: "Be honest. Your biggest flaw?", a: [
+    ["Everything has to be perfect", "bree"],
+    ["I can't ask for help", "lynette"],
+    ["I can be a little self-centered", "gaby"],
+    ["Drama finds me. Sometimes I find it", "edie"],
+    ["I overthink and can't decide", "susan"],
+    ["I'm a tiny bit nosy", "karen"]
+  ]},
+  { q: "Pick your outfit for our next meetup.", a: [
+    ["Pearls, a pressed blouse, not a crease in sight", "bree"],
+    ["Comfy and practical, I have places to be", "lynette"],
+    ["Designer heels, always", "gaby"],
+    ["Something fitted and bold", "edie"],
+    ["A soft cardigan and cute earrings", "susan"],
+    ["Classic. I stopped caring what others think years ago", "karen"]
+  ]},
+  { q: "Crisis hits. What do you do?", a: [
+    ["Stay calm and start cleaning", "bree"],
+    ["Take charge and give everyone a task", "lynette"],
+    ["Get dramatic, then fight back hard", "gaby"],
+    ["Look out for myself first", "edie"],
+    ["Call my girls in a panic", "susan"],
+    ["Handle it quietly. No questions asked", "karen"]
+  ]}
+];
+
+const ORDER = ["bree", "lynette", "gaby", "edie", "susan", "karen"];
+let current = 0;
+let answers = [];
+
+const $ = id => document.getElementById(id);
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const shuffled = QUESTIONS.map(q => ({ q: q.q, a: shuffle(q.a) }));
+
+function show(id) {
+  ["intro", "quiz", "result"].forEach(s => $(s).hidden = s !== id);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderQuestion() {
+  const item = shuffled[current];
+  $("progress").innerHTML = shuffled.map((_, i) =>
+    `<span class="${i < current ? "done" : i === current ? "now" : ""}"></span>`).join("");
+  $("qcount").textContent = `Question ${current + 1} of ${shuffled.length}`;
+  $("question").textContent = item.q;
+  $("options").innerHTML = "";
+  item.a.forEach(([text, who]) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    if (answers[current] === who) b.classList.add("picked");
+    b.innerHTML = `<span class="dot"></span><span></span>`;
+    b.lastChild.textContent = text;
+    b.addEventListener("click", () => pick(b, who));
+    $("options").appendChild(b);
+  });
+  $("backBtn").style.visibility = current === 0 ? "hidden" : "visible";
+}
+
+function pick(btn, who) {
+  document.querySelectorAll(".opt").forEach(o => o.classList.remove("picked"));
+  btn.classList.add("picked");
+  answers[current] = who;
+  document.querySelectorAll(".opt").forEach(o => o.disabled = true);
+  setTimeout(() => {
+    if (current < shuffled.length - 1) { current++; renderQuestion(); }
+    else showResult();
+  }, 380);
+}
+
+function showResult() {
+  const counts = Object.fromEntries(ORDER.map(k => [k, 0]));
+  answers.forEach(a => counts[a]++);
+  const max = Math.max(...Object.values(counts));
+  const tied = ORDER.filter(k => counts[k] === max);
+  const winner = tied[Math.floor(Math.random() * tied.length)];
+  const c = CHARACTERS[winner];
+  const sorted = ORDER.slice().sort((a, b) => counts[b] - counts[a]);
+
+  $("result").innerHTML = `
+    <article class="result-card">
+      <div class="result-top">
+        <p class="you">You are</p>
+        <h2>${c.name}</h2>
+        <p class="tag">${c.tag}</p>
+      </div>
+      <div class="result-body">
+        <ul class="traits">${c.traits.map(t => `<li>${t}</li>`).join("")}</ul>
+        <p>${c.about}</p>
+        <p class="shadow-side">${c.shadow}</p>
+        <div class="pairing">
+          <div><small>Your tea</small><strong>${c.tea}</strong></div>
+          <div><small>Your Sunday snack</small><strong>${c.snack}</strong></div>
+        </div>
+        <div class="mix">
+          <h3>Your housewife mix</h3>
+          ${sorted.map(k => {
+            const pct = Math.round(counts[k] / answers.length * 100);
+            return `<div class="bar ${k === winner ? "top" : ""}">
+              <span>${CHARACTERS[k].name}</span>
+              <span class="track"><span class="fill" data-w="${pct}"></span></span>
+              <span class="pct">${pct}%</span></div>`;
+          }).join("")}
+        </div>
+        <div class="actions">
+          <button class="btn" id="shareBtn">Share my result</button>
+          <button class="btn-ghost" id="againBtn">Take it again</button>
+        </div>
+        <p class="toast" id="toast"></p>
+      </div>
+    </article>`;
+  show("result");
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".fill").forEach(f => f.style.width = f.dataset.w + "%");
+  });
+  $("againBtn").addEventListener("click", restart);
+  $("shareBtn").addEventListener("click", () => share(c.name));
+  launchConfetti();
+}
+
+async function share(name) {
+  const text = `I got ${name} on the Spill the Tea Desperate Housewives quiz! Which housewife are you?`;
+  const url = location.href;
+  try {
+    if (navigator.share) { await navigator.share({ title: "Spill the Tea", text, url }); return; }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  try {
+    await navigator.clipboard.writeText(`${text} ${url}`);
+    $("toast").textContent = "Copied. Paste it in the group chat.";
+  } catch (e) {
+    $("toast").textContent = "Copy this link to share: " + url;
+  }
+}
+
+function restart() {
+  current = 0; answers = [];
+  show("intro");
+}
+
+/* Confetti */
+function launchConfetti() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const canvas = $("confetti");
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.width = innerWidth * dpr;
+  const H = canvas.height = innerHeight * dpr;
+  const colors = ["#C46D7A", "#F4B6C2", "#E8A0AE", "#6F7646", "#A8AF7A", "#E9C77B", "#F3E7D7", "#FF8FA3"];
+  const shapes = ["rect", "circle", "heart"];
+  const pieces = [];
+  function burst(x, y, n, spread) {
+    for (let i = 0; i < n; i++) {
+      const angle = -Math.PI / 2 + (Math.random() - .5) * spread;
+      const speed = (8 + Math.random() * 12) * dpr;
+      pieces.push({
+        x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        size: (6 + Math.random() * 8) * dpr, rot: Math.random() * 6.28,
+        vr: (Math.random() - .5) * .3, color: colors[i % colors.length],
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        life: 0, wobble: Math.random() * 10
+      });
+    }
+  }
+  burst(W * .5, H * .6, 140, Math.PI * 1.2);
+  setTimeout(() => burst(W * .1, H, 80, Math.PI * .5), 250);
+  setTimeout(() => burst(W * .9, H, 80, Math.PI * .5), 450);
+
+  function heart(s) {
+    ctx.beginPath();
+    ctx.moveTo(0, s * .3);
+    ctx.bezierCurveTo(-s, -s * .4, -s * .4, -s, 0, -s * .35);
+    ctx.bezierCurveTo(s * .4, -s, s, -s * .4, 0, s * .3);
+    ctx.fill();
+  }
+  let frame;
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    pieces.forEach(p => {
+      p.life++;
+      p.vy += .35 * dpr; p.vx *= .985; p.vy *= .985;
+      p.x += p.vx + Math.sin((p.life + p.wobble) / 8) * dpr;
+      p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - p.life / 260);
+      if (p.shape === "rect") ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+      else if (p.shape === "circle") { ctx.beginPath(); ctx.arc(0, 0, p.size / 2.5, 0, 6.28); ctx.fill(); }
+      else heart(p.size * .8);
+      ctx.restore();
+    });
+    for (let i = pieces.length - 1; i >= 0; i--) {
+      if (pieces[i].y > H + 50 || pieces[i].life > 260) pieces.splice(i, 1);
+    }
+    if (pieces.length) frame = requestAnimationFrame(tick);
+    else ctx.clearRect(0, 0, W, H);
+  }
+  cancelAnimationFrame(frame);
+  tick();
+}
+
+$("startBtn").addEventListener("click", () => { current = 0; answers = []; show("quiz"); renderQuestion(); });
+$("backBtn").addEventListener("click", () => { if (current > 0) { current--; renderQuestion(); } });
+</script>
+</body>
+</html>
